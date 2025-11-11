@@ -20,7 +20,7 @@ let allGenres = [{
             },
             {
                 name: "Chú Hề Chơi Đồ",
-                artist: "tuiduc fix",
+                artist: "Chill",
                 img: "https://i.ibb.co/9HBN0M7V/music-3.gif",
                 id: "music-3",
                 src: "https://files.catbox.moe/gwxkal.mp3",

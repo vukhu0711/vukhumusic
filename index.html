@@ -3,47 +3,479 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <link rel="icon" href="./images/favicon.png" type="image/x-icon" />
-    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon" />
+    <link rel="icon" href="./images/avt2.jpg" type="image/x-icon" />
+    <link rel="shortcut icon" href="./images/avt2.jpg" type="image/x-icon" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="VuKhu" />
     <meta property="og:description" content="Nghe Nhạc Bằng Mũi" />
 
     <title>VuDinhKhu|Music</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <style>
+        /* Reset và base styles */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 25%, #24243e 50%, #1a1a2e 75%, #16213e 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+        /* Hiệu ứng Meteor Showers */
+        
+        .meteor {
+            position: fixed;
+            top: -10px;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px rgba(0, 255, 255, 0.7);
+            animation: meteorFall linear forwards;
+            z-index: -1;
+        }
+        
+        @keyframes meteorFall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(100vw) rotate(45deg);
+                opacity: 0;
+            }
+        }
+        /* Hiệu ứng sao băng lớn */
+        
+        .shooting-star {
+            position: fixed;
+            top: -50px;
+            width: 3px;
+            height: 100px;
+            background: linear-gradient(transparent, #00ffff, transparent);
+            box-shadow: 0 0 20px 3px rgba(0, 255, 255, 0.8);
+            animation: shootingStar linear forwards;
+            z-index: -1;
+        }
+        
+        @keyframes shootingStar {
+            0% {
+                transform: translateY(0) translateX(0) rotate(-45deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(100vw) rotate(-45deg);
+                opacity: 0;
+            }
+        }
+        /* Hiệu ứng twinkling stars */
+        
+        .star {
+            position: fixed;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle infinite alternate;
+            z-index: -1;
+        }
+        
+        @keyframes twinkle {
+            0% {
+                opacity: 0.2;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+        
+        .wrapper {
+            width: 95%;
+            max-width: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin: 10px auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .avatar-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .avatar-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .time-display {
+            font-size: 11px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+        
+        .icon-link {
+            color: #00ffff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 50%;
+            padding: 6px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .icon-link:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+        }
+        
+        .icon-link i {
+            font-size: 18px;
+        }
+        
+        .img-area {
+            height: 130px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 12px 0;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .img-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .song-details {
+            text-align: center;
+            margin: 12px 0;
+        }
+        
+        .song-details .name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 2px 10px rgba(0, 255, 255, 0.5);
+            color: #ffffff;
+        }
+        
+        .song-details .artist {
+            font-size: 12px;
+            opacity: 0.9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #00ffff;
+            text-shadow: 0 1px 5px rgba(0, 255, 255, 0.3);
+        }
+        
+        .progress-area {
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+        
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: var(--progress, 0%);
+            background: linear-gradient(90deg, #00ffff, #ff00ff, #ffff00);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+        }
+        
+        .song-timer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            margin-top: 8px;
+            opacity: 0.9;
+            color: #00ffff;
+            text-shadow: 0 1px 3px rgba(0, 255, 255, 0.3);
+        }
+        
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 18px 0;
+        }
+        
+        .controls i {
+            font-size: 20px;
+            color: #00ffff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            text-shadow: 0 2px 8px rgba(0, 255, 255, 0.4);
+        }
+        
+        .controls i:hover {
+            background: rgba(0, 255, 255, 0.15);
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .play-pause {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .play-pause:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+        
+        .play-pause i {
+            color: white;
+            font-size: 22px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+        
+        .music-list-container {
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+        
+        .genre-list,
+        .music-list {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .header .row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header span {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00ffff;
+            text-shadow: 0 1px 5px rgba(0, 255, 255, 0.3);
+        }
+        
+        .header i {
+            cursor: pointer;
+            font-size: 18px;
+            color: #00ffff;
+            text-shadow: 0 1px 5px rgba(0, 255, 255, 0.3);
+        }
+        
+        ul {
+            list-style: none;
+        }
+        
+        li {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            border: 1px solid rgba(0, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        li:hover {
+            background: rgba(0, 255, 255, 0.15);
+            transform: translateX(5px);
+            border-color: rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            opacity: 0.9;
+            padding: 15px 8px;
+            margin-top: 20px;
+            width: 100%;
+            color: #00ffff;
+            text-shadow: 0 1px 5px rgba(0, 255, 255, 0.3);
+        }
+        
+        .footer a {
+            color: #ffff00;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: #ff00ff;
+            text-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+        }
+        /* Scrollbar styling */
+        
+         ::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #00ffff, #ff00ff);
+            border-radius: 2px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #ffff00, #ff00ff);
+        }
+        /* Auto scroll to selected song */
+        
+        .music-item.active {
+            background: rgba(0, 255, 255, 0.2);
+            border-left: 3px solid #00ffff;
+            border-color: rgba(0, 255, 255, 0.6);
+        }
+        /* Ultra compact for very small devices */
+        
+        @media (max-width: 320px) {
+            .wrapper {
+                width: 98%;
+                padding: 12px;
+                max-width: 280px;
+            }
+            .img-area {
+                height: 110px;
+            }
+            .song-details .name {
+                font-size: 15px;
+            }
+            .controls {
+                gap: 6px;
+            }
+            .controls i {
+                font-size: 18px;
+                padding: 6px;
+            }
+            .play-pause {
+                width: 40px;
+                height: 40px;
+            }
+            .play-pause i {
+                font-size: 20px;
+            }
+            .music-list-container {
+                max-height: 160px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- keep snow but disabled until user interaction to reduce work on load -->
-    <div class="snow-container" id="snow-container" aria-hidden="true"></div>
+    <div id="meteor-container"></div>
 
     <div class="wrapper">
         <div class="top-bar">
             <div class="avatar-icon">
-                <img src="./images/avt2.jpg" alt="Avatar"> </div>
+                <img src="./images/avt2.jpg" alt="Avatar" loading="lazy">
+            </div>
             <span id="vietnam-time" class="time-display">00:00:00</span>
-
             <a href="https://t.me/ItsMeemo123" target="_blank" id="telegram-link" class="icon-link">
                 <i class="material-icons" title="Liên hệ Telegram">send</i>
             </a>
         </div>
 
         <div class="img-area">
-            <!-- lazy load main image to reduce initial load -->
-            <img src="./images/placeholder.png" data-src="" alt="Music Card Image" loading="lazy" id="main-image">
+            <img src="" alt="Music Card Image" loading="lazy" id="main-image">
         </div>
+
         <div class="song-details">
-            <p class="name"></p>
-            <p class="artist"></p>
+            <p class="name">Đang tải bài hát...</p>
+            <p class="artist">Vui lòng chờ</p>
         </div>
 
         <div class="progress-area">
             <div class="progress-bar">
-                <!-- avoid full preloading of audio -->
                 <audio id="main-audio" src="" preload="metadata"></audio>
             </div>
             <div class="song-timer">
@@ -63,76 +495,437 @@
         </div>
 
         <div class="music-list-container">
-
-            <div class="genre-list">
+            <div class="genre-list" id="genre-list" style="display: none;">
                 <div class="header">
                     <div class="row">
-                        <i class="list material-icons">widgets</i>
-                        <span>Chọn Thể Loại Nhạc 🎶</span>
+                        <i class="list material-icons">queue_music</i>
+                        <span>Thể Loại Nhạc</span>
                     </div>
                     <i id="close-genre" class="material-icons">close</i>
                 </div>
                 <ul id="genre-ul">
+                    <!-- Genre items will be populated by JavaScript -->
                 </ul>
             </div>
 
-            <div class="music-list">
+            <div class="music-list" id="music-list" style="display: none;">
                 <div class="header">
                     <div class="row">
                         <i id="back-to-genre" class="material-icons">arrow_back</i>
-                        <span id="current-genre-name">Music list</span>
+                        <span id="current-genre-name">Danh sách nhạc</span>
                     </div>
                     <i id="close-music-list" class="material-icons">close</i>
                 </div>
                 <ul id="music-ul">
+                    <!-- Music items will be populated by JavaScript -->
                 </ul>
             </div>
-
         </div>
     </div>
 
     <footer class="footer">
-        Designed by <a href="https://vukhuprofile.netlify.app/" target="">VuKhu</a>
+        Designed by <a href="https://vukhuprofile.netlify.app/" target="_blank">VuKhu</a>
     </footer>
 
-    <!-- defer scripts so HTML paints first -->
     <script>
-        // small inline helper: enable heavy animations and lazy image replacement only after first interaction
-        (function() {
-            function enableAfterInteraction() {
-                // enable snow animation
-                var snow = document.getElementById('snow-container');
-                if (snow) snow.classList.add('enabled');
+        // Music data từ list của bạn
+        const allGenres = [{
+            genre: "Vinahouse",
+            songs: [{
+                name: "LamSung SCL NST #1",
+                artist: "Lamsung026",
+                img: "https://i.ibb.co/dwBvK94K/music-1.gif",
+                id: "music-2",
+                src: "https://files.catbox.moe/9fy2ex.mp3",
+            }, {
+                name: "Chú Hề Chơi Đồ",
+                artist: "Chill",
+                img: "https://i.ibb.co/9HBN0M7V/music-3.gif",
+                id: "music-3",
+                src: "https://files.catbox.moe/gwxkal.mp3",
+            }, {
+                name: "LamSung SCL NST #2",
+                artist: "Lamsung026",
+                img: "https://i.ibb.co/1fhTvqKC/music-4.gif",
+                id: "music-4",
+                src: "https://files.catbox.moe/2a0dun.mp3",
+            }, {
+                name: "Gõ Gãy Người",
+                artist: "CDAN",
+                img: "https://i.ibb.co/67SRsvvW/music-5.gif",
+                id: "music-5",
+                src: "https://files.catbox.moe/qml7rz.mp3",
+            }]
+        }, {
+            genre: "Vietmix",
+            songs: [{
+                name: "Infinity Music Vol 6",
+                artist: "Ferrari",
+                img: "https://i.ibb.co/hx7KZhcD/music-6.gif",
+                id: "music-6",
+                src: "https://files.catbox.moe/2a0dun.mp3",
+            }, ]
+        }, {
+            genre: "Track Lẻ",
+            songs: [{
+                name: "Đừng Ai Nhắc Về Cô Ấy",
+                artist: "Future Mix",
+                img: "https://i.ibb.co/KcYnNHth/music-2.gif",
+                id: "music-7",
+                src: "https://files.catbox.moe/xyx091.mp3",
+            }, ]
+        }, ];
 
-                // replace main image data-src if provided by script.js later
-                var img = document.getElementById('main-image');
-                if (img && img.dataset.src && !img.src.includes('placeholder')) {
-                    img.src = img.dataset.src;
+        // Audio player functionality
+        const mainAudio = document.getElementById('main-audio');
+        const playPauseBtn = document.querySelector('.play-pause i');
+        const progressBar = document.querySelector('.progress-bar');
+        const currentTimeEl = document.querySelector('.current-time');
+        const maxDurationEl = document.querySelector('.max-duration');
+        let isPlaying = false;
+        let currentSongIndex = 0;
+        let currentSongs = [];
+
+        // Meteor Showers Effect
+        function createMeteor() {
+            const container = document.getElementById('meteor-container');
+            const meteor = document.createElement('div');
+            meteor.className = Math.random() > 0.7 ? 'shooting-star' : 'meteor';
+
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 50;
+
+            meteor.style.left = startX + 'vw';
+            meteor.style.top = startY + 'vh';
+            meteor.style.animationDuration = (Math.random() * 3 + 2) + 's';
+
+            container.appendChild(meteor);
+
+            setTimeout(() => {
+                if (meteor.parentNode) {
+                    meteor.parentNode.removeChild(meteor);
+                }
+            }, 5000);
+        }
+
+        function createStars() {
+            const container = document.getElementById('meteor-container');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.width = (Math.random() * 2 + 1) + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+                star.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(star);
+            }
+        }
+
+        function initMeteorShowers() {
+            createStars();
+            setInterval(createMeteor, 800);
+            setInterval(createMeteor, 1200);
+        }
+
+        // Function to get random song from all genres
+        function getRandomSong() {
+            const allSongs = allGenres.flatMap(genre => genre.songs);
+            const randomIndex = Math.floor(Math.random() * allSongs.length);
+            const randomSong = allSongs[randomIndex];
+
+            let genreIndex = -1;
+            let songIndex = -1;
+
+            for (let i = 0; i < allGenres.length; i++) {
+                const genre = allGenres[i];
+                const index = genre.songs.findIndex(song => song.id === randomSong.id);
+                if (index !== -1) {
+                    genreIndex = i;
+                    songIndex = index;
+                    break;
+                }
+            }
+
+            return {
+                song: randomSong,
+                genreIndex: genreIndex,
+                songIndex: songIndex,
+                songs: allGenres[genreIndex].songs
+            };
+        }
+
+        // Load random song immediately (không tự động play)
+        function loadRandomSong() {
+            const randomData = getRandomSong();
+            if (randomData.song) {
+                document.querySelector('.song-details .name').textContent = randomData.song.name;
+                document.querySelector('.song-details .artist').textContent = randomData.song.artist;
+
+                if (randomData.song.img) {
+                    document.getElementById('main-image').src = randomData.song.img;
                 }
 
-                // remove this listener once done
+                mainAudio.src = randomData.song.src;
+                currentSongs = randomData.songs;
+                currentSongIndex = randomData.songIndex;
+                mainAudio.load();
+
+                console.log('Đã tải sẵn bài hát:', randomData.song.name);
+            }
+        }
+
+        // Play/pause functionality
+        function togglePlayPause() {
+            if (!mainAudio.src) return;
+
+            if (isPlaying) {
+                mainAudio.pause();
+                playPauseBtn.textContent = 'play_arrow';
+            } else {
+                mainAudio.play().catch(e => {
+                    console.log('Audio play failed:', e);
+                });
+                playPauseBtn.textContent = 'pause';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            if (!mainAudio.src) return;
+
+            const {
+                currentTime,
+                duration
+            } = mainAudio;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.setProperty('--progress', `${progressPercent}%`);
+
+            currentTimeEl.textContent = formatTime(currentTime);
+            maxDurationEl.textContent = formatTime(duration);
+        }
+
+        // Format time to mm:ss
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return '0:00';
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec.toString().padStart(2, '0')}`;
+        }
+
+        // Seek functionality
+        function seek(e) {
+            if (!mainAudio.src) return;
+
+            const progressWidth = progressBar.clientWidth;
+            const clickedOffsetX = e.offsetX;
+            const songDuration = mainAudio.duration;
+
+            mainAudio.currentTime = (clickedOffsetX / progressWidth) * songDuration;
+        }
+
+        // Event listeners for audio controls
+        document.querySelector('.play-pause').addEventListener('click', togglePlayPause);
+        progressBar.addEventListener('click', seek);
+        mainAudio.addEventListener('timeupdate', updateProgress);
+        mainAudio.addEventListener('loadedmetadata', updateProgress);
+
+        // Music list management với data thực tế
+        function initMusicList() {
+            const genreList = document.getElementById('genre-list');
+            const musicList = document.getElementById('music-list');
+            const backToGenre = document.getElementById('back-to-genre');
+            const closeGenre = document.getElementById('close-genre');
+            const closeMusicList = document.getElementById('close-music-list');
+            const moreMusic = document.getElementById('more-music');
+
+            // Populate genre list từ allGenres
+            const genreUl = document.getElementById('genre-ul');
+            allGenres.forEach(genreData => {
+                const li = document.createElement('li');
+                li.textContent = genreData.genre;
+                li.onclick = () => {
+                    showMusicList(genreData.genre, genreData.songs);
+                };
+                genreUl.appendChild(li);
+            });
+
+            // Show music list function
+            function showMusicList(genreName, songs) {
+                genreList.style.display = 'none';
+                musicList.style.display = 'block';
+                document.getElementById('current-genre-name').textContent = genreName;
+
+                const musicUl = document.getElementById('music-ul');
+                musicUl.innerHTML = '';
+
+                songs.forEach((song, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'music-item';
+                    li.innerHTML = `
+                        <strong>${song.name}</strong><br>
+                        <small>${song.artist}</small>
+                    `;
+                    li.onclick = () => {
+                        document.querySelectorAll('.music-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        li.classList.add('active');
+                        playSelectedSong(song, songs, index);
+                        setTimeout(() => {
+                            musicList.style.display = 'none';
+                        }, 300);
+                    };
+                    musicUl.appendChild(li);
+                });
+            }
+
+            // Back to genre list
+            backToGenre.onclick = () => {
+                musicList.style.display = 'none';
+                genreList.style.display = 'block';
+            };
+
+            // Close buttons
+            closeGenre.onclick = () => {
+                genreList.style.display = 'none';
+            };
+
+            closeMusicList.onclick = () => {
+                musicList.style.display = 'none';
+            };
+
+            // More music button - Toggle genre list
+            moreMusic.onclick = () => {
+                if (genreList.style.display === 'none') {
+                    genreList.style.display = 'block';
+                    musicList.style.display = 'none';
+                } else {
+                    genreList.style.display = 'none';
+                }
+            };
+
+            // Play selected song function
+            function playSelectedSong(song, songs, index) {
+                document.querySelector('.song-details .name').textContent = song.name;
+                document.querySelector('.song-details .artist').textContent = song.artist;
+
+                if (song.img) {
+                    document.getElementById('main-image').src = song.img;
+                }
+
+                mainAudio.src = song.src;
+                currentSongs = songs;
+                currentSongIndex = index;
+
+                mainAudio.load();
+                mainAudio.play().then(() => {
+                    isPlaying = true;
+                    playPauseBtn.textContent = 'pause';
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                    isPlaying = true;
+                    playPauseBtn.textContent = 'pause';
+                });
+            }
+
+            // Next/previous functionality
+            document.getElementById('next').addEventListener('click', () => {
+                if (currentSongs.length > 0) {
+                    currentSongIndex = (currentSongIndex + 1) % currentSongs.length;
+                    playSelectedSong(currentSongs[currentSongIndex], currentSongs, currentSongIndex);
+                }
+            });
+
+            document.getElementById('prev').addEventListener('click', () => {
+                if (currentSongs.length > 0) {
+                    currentSongIndex = (currentSongIndex - 1 + currentSongs.length) % currentSongs.length;
+                    playSelectedSong(currentSongs[currentSongIndex], currentSongs, currentSongIndex);
+                }
+            });
+
+            // Repeat functionality
+            let repeatMode = 0;
+            document.getElementById('repeat-plist').addEventListener('click', () => {
+                repeatMode = (repeatMode + 1) % 3;
+                const repeatBtn = document.getElementById('repeat-plist');
+
+                switch (repeatMode) {
+                    case 0:
+                        repeatBtn.textContent = 'repeat';
+                        repeatBtn.title = 'Repeat off';
+                        break;
+                    case 1:
+                        repeatBtn.textContent = 'repeat';
+                        repeatBtn.style.color = '#00ffff';
+                        repeatBtn.title = 'Repeat all';
+                        break;
+                    case 2:
+                        repeatBtn.textContent = 'repeat_one';
+                        repeatBtn.title = 'Repeat one';
+                        break;
+                }
+            });
+
+            // Auto play next song when current ends
+            mainAudio.addEventListener('ended', () => {
+                if (repeatMode === 2) {
+                    mainAudio.currentTime = 0;
+                    mainAudio.play();
+                } else if (currentSongs.length > 0) {
+                    if (repeatMode === 1 || currentSongIndex < currentSongs.length - 1) {
+                        currentSongIndex = (currentSongIndex + 1) % currentSongs.length;
+                        playSelectedSong(currentSongs[currentSongIndex], currentSongs, currentSongIndex);
+                    } else {
+                        isPlaying = false;
+                        playPauseBtn.textContent = 'play_arrow';
+                    }
+                }
+            });
+        }
+
+        // Vietnam time display
+        function updateVietnamTime() {
+            const now = new Date();
+            const options = {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            const timeString = now.toLocaleTimeString('vi-VN', options);
+            document.getElementById('vietnam-time').textContent = timeString;
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Khởi tạo hiệu ứng Meteor Showers
+            initMeteorShowers();
+
+            // Tải bài hát random
+            loadRandomSong();
+
+            // Enable effects after user interaction
+            function enableAfterInteraction() {
+                initMusicList();
+                setInterval(updateVietnamTime, 1000);
+                updateVietnamTime();
+
                 window.removeEventListener('click', enableAfterInteraction);
                 window.removeEventListener('keydown', enableAfterInteraction);
             }
+
             window.addEventListener('click', enableAfterInteraction, {
                 once: true
             });
             window.addEventListener('keydown', enableAfterInteraction, {
                 once: true
             });
-        })();
+        });
     </script>
-
-    <script defer src="js/music-list.js"></script>
-    <script defer src="js/script.js"></script>
 </body>
-</script>
-
-<script defer src="js/snow-effect.js"></script>
-<script defer src="js/music-list.js"></script>
-<script defer src="js/script.js"></script>
-</body>
-
-</html>
 
 </html>
