@@ -179,12 +179,51 @@
             position: relative;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2);
             border: 1px solid rgba(0, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.2);
         }
         
         .img-area img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: opacity 0.5s ease;
+        }
+        
+        .img-area .placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            color: #00ffff;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+            z-index: 2;
+        }
+        
+        .img-area .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ffff;
+            animation: spin 1s ease-in-out infinite;
+            z-index: 1;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
         }
         
         .song-details {
@@ -448,6 +487,24 @@
                 max-height: 160px;
             }
         }
+        
+        .audio-loading {
+            position: relative;
+        }
+        
+        .audio-loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ffff;
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 
@@ -466,7 +523,9 @@
         </div>
 
         <div class="img-area">
-            <img src="" alt="Music Card Image" loading="lazy" id="main-image">
+            <div class="placeholder">Đang tải hình ảnh...</div>
+            <div class="loading-spinner" style="display: none;"></div>
+            <img src="" alt="Music Card Image" id="main-image" style="opacity: 0;">
         </div>
 
         <div class="song-details">
@@ -487,7 +546,7 @@
         <div class="controls">
             <i id="repeat-plist" class="material-icons" title="Playlist looped">repeat</i>
             <i id="prev" class="material-icons">skip_previous</i>
-            <div class="play-pause">
+            <div class="play-pause" id="play-pause-btn">
                 <i class="material-icons play">play_arrow</i>
             </div>
             <i id="next" class="material-icons">skip_next</i>
@@ -528,31 +587,31 @@
     </footer>
 
     <script>
-        // Music data từ list của bạn
+        // Music data với link ảnh đã được sửa - SỬ DỤNG LINK GIPHY THỰC TẾ
         const allGenres = [{
             genre: "Vinahouse",
             songs: [{
                 name: "LamSung SCL NST #1",
                 artist: "Lamsung026",
-                img: "https://i.ibb.co/dwBvK94K/music-1.gif",
+                img: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHpzaDFmNXd6cjkxN2wxYjR0YWFxdGp3dmowNzltbjgzaWJsdDRpbSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jh7F7XwHTywg85ekdl/giphy.gif",
                 id: "music-2",
                 src: "https://files.catbox.moe/9fy2ex.mp3",
             }, {
                 name: "Chú Hề Chơi Đồ",
                 artist: "Chill",
-                img: "https://i.ibb.co/9HBN0M7V/music-3.gif",
+                img: "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eGNkY2llaXdpb3ZvcDFwMDF3eHZuemtha3k0a3J2aGhlcXh0dWZ1dSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/c8P0srXm9BNug/giphy.gif",
                 id: "music-3",
                 src: "https://files.catbox.moe/gwxkal.mp3",
             }, {
                 name: "LamSung SCL NST #2",
                 artist: "Lamsung026",
-                img: "https://i.ibb.co/1fhTvqKC/music-4.gif",
+                img: "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3dHVta2JiZ3dteW13YmNxNmw2YmM0bXFpdDg2aWljemEweWc3cnB1YSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5pRnyEv3ZxO0g/giphy.gif",
                 id: "music-4",
                 src: "https://files.catbox.moe/2a0dun.mp3",
             }, {
                 name: "Gõ Gãy Người",
                 artist: "CDAN",
-                img: "https://i.ibb.co/67SRsvvW/music-5.gif",
+                img: "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eThpNDg0bHNyYTJpMDJpMXU0N2VrN245OGZ3N2FqbTVvNGV5ZWNjbCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/aEGZ2AmirWIKa9QnqD/giphy.gif",
                 id: "music-5",
                 src: "https://files.catbox.moe/qml7rz.mp3",
             }]
@@ -561,30 +620,66 @@
             songs: [{
                 name: "Infinity Music Vol 6",
                 artist: "Ferrari",
-                img: "https://i.ibb.co/hx7KZhcD/music-6.gif",
+                img: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2M5MTkwb3ExN3dtYnFraXdkMHk1eG50Ym5mbHY4enV2eWljNWdheSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mG1uA7JnuAZqbWV44g/giphy.gif",
                 id: "music-6",
                 src: "https://files.catbox.moe/2a0dun.mp3",
-            }, ]
+            }]
         }, {
             genre: "Track Lẻ",
             songs: [{
                 name: "Đừng Ai Nhắc Về Cô Ấy",
                 artist: "Future Mix",
-                img: "https://i.ibb.co/KcYnNHth/music-2.gif",
+                img: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2M5MTkwb3ExN3dtYnFraXdkMHk1eG50Ym5mbHY4enV2eWljNWdheSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mG1uA7JnuAZqbWV44g/giphy.gif",
                 id: "music-7",
                 src: "https://files.catbox.moe/xyx091.mp3",
-            }, ]
-        }, ];
+            }, {
+                name: "Full Track",
+                artist: "MACOL",
+                img: "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDc1dGswejIzdHRneW0xdjhnamVwZDhmMzZuOXViN3I5YzZ5cGhscyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/0iksAXjBPkaM96HpCZ/giphy.gif",
+                id: "music-13",
+                src: "https://files.catbox.moe/xyx091.mp3",
+            }]
+        }, {
+            genre: "Nonstop",
+            songs: [{
+                name: "Vẽ Cảnh",
+                artist: "VanhJB",
+                img: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeGkwNWJmanExdmxyNXk5MTJmcmlzcW95NGQyd2s2aWQzZWoyNWZvMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/XcX3Ae8GSDWN1ciqqi/giphy.gif",
+                id: "music-8",
+                src: "https://files.catbox.moe/n9d4rv.mp3",
+            }, {
+                name: "Bay Kem Mix",
+                artist: "VanhJB",
+                img: "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2M5MTkwb3ExN3dtYnFraXdkMHk1eG50Ym5mbHY4enV2eWljNWdheSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mG1uA7JnuAZqbWV44g/giphy.gif",
+                id: "music-9",
+                src: "https://files.catbox.moe/nc8fbe.mp3",
+            }, {
+                name: "2h Ketamin",
+                artist: "Mix",
+                img: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzZndHE4ejlvOTAwYjgyOXZ0aGV2dnd4bHRqcWRsa3prMnZrNWV0ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/bv11Ek400Jqh0CJevj/giphy.gif",
+                id: "music-10",
+                src: "https://files.catbox.moe/uru2ru.mp3",
+            }]
+        }];
+
+        // Tối ưu hóa tải GIF với các kỹ thuật mới
+        const imageCache = new Map();
+        const audioCache = new Map(); // Cache cho audio
+        const preloadQueue = [];
+        let isPreloading = false;
 
         // Audio player functionality
         const mainAudio = document.getElementById('main-audio');
         const playPauseBtn = document.querySelector('.play-pause i');
+        const playPauseContainer = document.getElementById('play-pause-btn');
         const progressBar = document.querySelector('.progress-bar');
         const currentTimeEl = document.querySelector('.current-time');
         const maxDurationEl = document.querySelector('.max-duration');
+        const mainImage = document.getElementById('main-image');
         let isPlaying = false;
         let currentSongIndex = 0;
         let currentSongs = [];
+        let isAudioLoading = false;
 
         // Meteor Showers Effect
         function createMeteor() {
@@ -656,6 +751,266 @@
             };
         }
 
+        // Tối ưu hóa tải ảnh với queue và priority
+        function addToPreloadQueue(imgUrl, priority = false) {
+            if (imageCache.has(imgUrl)) return;
+
+            const item = {
+                imgUrl,
+                priority
+            };
+            if (priority) {
+                preloadQueue.unshift(item);
+            } else {
+                preloadQueue.push(item);
+            }
+
+            if (!isPreloading) {
+                processPreloadQueue();
+            }
+        }
+
+        async function processPreloadQueue() {
+            if (isPreloading || preloadQueue.length === 0) return;
+
+            isPreloading = true;
+
+            while (preloadQueue.length > 0) {
+                const {
+                    imgUrl
+                } = preloadQueue.shift();
+                await loadImageWithCache(imgUrl);
+
+                // Nghỉ ngắn giữa các lần tải để tránh block UI
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            isPreloading = false;
+        }
+
+        // Tải ảnh với cache và fallback - ĐÃ SỬA LỖI
+        async function loadImageWithCache(imgUrl) {
+            if (imageCache.has(imgUrl)) {
+                return imageCache.get(imgUrl);
+            }
+
+            return new Promise((resolve) => {
+                const img = new Image();
+
+                // Thiết lập timeout để tránh treo
+                const timeoutId = setTimeout(() => {
+                    console.warn('Timeout loading image:', imgUrl);
+                    img.onload = null;
+                    img.onerror = null;
+                    resolve(null);
+                }, 5000); // Giảm timeout xuống 5 giây
+
+                img.onload = () => {
+                    clearTimeout(timeoutId);
+                    imageCache.set(imgUrl, img);
+                    console.log('✅ Đã tải ảnh thành công:', imgUrl);
+                    resolve(img);
+                };
+
+                img.onerror = () => {
+                    clearTimeout(timeoutId);
+                    console.warn('❌ Không thể tải ảnh:', imgUrl);
+                    imageCache.set(imgUrl, null);
+                    resolve(null);
+                };
+
+                img.src = imgUrl;
+            });
+        }
+
+        // Tải audio với cache và timeout
+        async function loadAudioWithCache(audioUrl) {
+            if (audioCache.has(audioUrl)) {
+                return audioCache.get(audioUrl);
+            }
+
+            return new Promise((resolve) => {
+                const audio = new Audio();
+
+                // Thiết lập timeout cho audio
+                const timeoutId = setTimeout(() => {
+                    console.warn('Timeout loading audio:', audioUrl);
+                    audio.oncanplaythrough = null;
+                    audio.onerror = null;
+                    resolve(null);
+                }, 10000); // 10 giây cho audio
+
+                audio.oncanplaythrough = () => {
+                    clearTimeout(timeoutId);
+                    console.log('✅ Audio ready to play:', audioUrl);
+                    audioCache.set(audioUrl, audio);
+                    resolve(audio);
+                };
+
+                audio.onerror = () => {
+                    clearTimeout(timeoutId);
+                    console.warn('❌ Không thể tải audio:', audioUrl);
+                    resolve(null);
+                };
+
+                // Preload metadata để tải nhanh hơn
+                audio.preload = 'metadata';
+                audio.src = audioUrl;
+            });
+        }
+
+        // Hàm lấy ảnh fallback khi ảnh chính lỗi
+        function getFallbackImage() {
+            const fallbackImages = [
+                "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN2M5MTkwb3ExN3dtYnFraXdkMHk1eG50Ym5mbHY4enV2eWljNWdheSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mG1uA7JnuAZqbWV44g/giphy.gif",
+                "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExb3B2bGJ6c2h3dW5mZ2V1Z2R0cXZ3Z2N6eGZ0eGZ0eGZ0eGZ0eGZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l0MYt5jPR6QX5pnqM/giphy.gif",
+                "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdDc1dGswejIzdHRneW0xdjhnamVwZDhmMzZuOXViN3I5YzZ5cGhscyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/0iksAXjBPkaM96HpCZ/giphy.gif"
+            ];
+            return fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+        }
+
+        // Cập nhật ảnh với hiệu ứng mượt mà và loading spinner - ĐÃ SỬA LỖI
+        async function updateImage(imgUrl) {
+            const placeholder = document.querySelector('.img-area .placeholder');
+            const spinner = document.querySelector('.img-area .loading-spinner');
+
+            // Hiển thị placeholder và spinner
+            placeholder.style.display = 'flex';
+            spinner.style.display = 'block';
+            mainImage.style.opacity = '0';
+
+            try {
+                // Ưu tiên tải ảnh này trước
+                addToPreloadQueue(imgUrl, true);
+                const img = await loadImageWithCache(imgUrl);
+
+                if (img && img.complete) {
+                    mainImage.src = imgUrl;
+                    showImage();
+                } else {
+                    // Nếu ảnh chính lỗi, thử ảnh fallback
+                    const fallbackUrl = getFallbackImage();
+                    console.log('🔄 Sử dụng ảnh fallback:', fallbackUrl);
+                    const fallbackImg = await loadImageWithCache(fallbackUrl);
+
+                    if (fallbackImg && fallbackImg.complete) {
+                        mainImage.src = fallbackUrl;
+                        showImage();
+                    } else {
+                        showError();
+                    }
+                }
+            } catch (error) {
+                console.error('Lỗi khi tải ảnh:', error);
+                showError();
+            }
+
+            function showImage() {
+                spinner.style.display = 'none';
+                setTimeout(() => {
+                    mainImage.style.opacity = '1';
+                    placeholder.style.display = 'none';
+                }, 100);
+            }
+
+            function showError() {
+                spinner.style.display = 'none';
+                placeholder.textContent = 'Không thể tải ảnh';
+                placeholder.style.display = 'flex';
+                // Vẫn hiển thị ảnh fallback dù có lỗi
+                mainImage.src = getFallbackImage();
+                mainImage.style.opacity = '1';
+            }
+        }
+
+        // Hiển thị trạng thái loading audio
+        function showAudioLoading() {
+            isAudioLoading = true;
+            playPauseContainer.classList.add('audio-loading');
+            playPauseBtn.style.opacity = '0.5';
+        }
+
+        // Ẩn trạng thái loading audio
+        function hideAudioLoading() {
+            isAudioLoading = false;
+            playPauseContainer.classList.remove('audio-loading');
+            playPauseBtn.style.opacity = '1';
+        }
+
+        // Tải và phát nhạc với tối ưu hóa
+        async function loadAndPlayAudio(audioUrl) {
+            if (isAudioLoading) return;
+
+            showAudioLoading();
+
+            try {
+                // Dừng audio hiện tại trước
+                mainAudio.pause();
+                mainAudio.currentTime = 0;
+
+                // Thử sử dụng audio cache trước
+                let audioToPlay = audioCache.get(audioUrl);
+
+                if (!audioToPlay) {
+                    console.log('🔄 Đang tải audio...');
+                    audioToPlay = await loadAudioWithCache(audioUrl);
+                }
+
+                if (audioToPlay) {
+                    // Sử dụng audio đã cache
+                    mainAudio.src = audioUrl;
+
+                    // Đợi audio có thể phát được
+                    await new Promise((resolve) => {
+                        const onCanPlay = () => {
+                            mainAudio.removeEventListener('canplay', onCanPlay);
+                            resolve();
+                        };
+                        mainAudio.addEventListener('canplay', onCanPlay);
+                    });
+
+                    hideAudioLoading();
+
+                    // Tự động phát sau khi tải xong
+                    await mainAudio.play();
+                    isPlaying = true;
+                    playPauseBtn.textContent = 'pause';
+
+                    console.log('✅ Phát nhạc thành công');
+                } else {
+                    hideAudioLoading();
+                    console.error('❌ Không thể tải audio');
+                    alert('Không thể tải bài hát. Vui lòng thử lại sau.');
+                }
+            } catch (error) {
+                hideAudioLoading();
+                console.error('Lỗi khi phát nhạc:', error);
+            }
+        }
+
+        // Preload tất cả ảnh với độ ưu tiên thấp
+        function preloadAllImages() {
+            allGenres.forEach(genre => {
+                genre.songs.forEach(song => {
+                    if (song.img) {
+                        addToPreloadQueue(song.img, false);
+                    }
+                });
+            });
+        }
+
+        // Preload audio cho bài hát tiếp theo
+        function preloadNextAudio() {
+            if (currentSongs.length > 0) {
+                const nextIndex = (currentSongIndex + 1) % currentSongs.length;
+                const nextSong = currentSongs[nextIndex];
+                if (nextSong && !audioCache.has(nextSong.src)) {
+                    console.log('🔮 Preloading next audio:', nextSong.name);
+                    loadAudioWithCache(nextSong.src);
+                }
+            }
+        }
+
         // Load random song immediately (không tự động play)
         function loadRandomSong() {
             const randomData = getRandomSong();
@@ -664,32 +1019,47 @@
                 document.querySelector('.song-details .artist').textContent = randomData.song.artist;
 
                 if (randomData.song.img) {
-                    document.getElementById('main-image').src = randomData.song.img;
+                    updateImage(randomData.song.img);
                 }
 
-                mainAudio.src = randomData.song.src;
                 currentSongs = randomData.songs;
                 currentSongIndex = randomData.songIndex;
+
+                // Chỉ load metadata, không phát ngay
+                mainAudio.src = randomData.song.src;
                 mainAudio.load();
 
                 console.log('Đã tải sẵn bài hát:', randomData.song.name);
+
+                // Preload bài tiếp theo
+                preloadNextAudio();
             }
         }
 
         // Play/pause functionality
-        function togglePlayPause() {
-            if (!mainAudio.src) return;
+        async function togglePlayPause() {
+            if (!mainAudio.src || isAudioLoading) return;
 
             if (isPlaying) {
                 mainAudio.pause();
                 playPauseBtn.textContent = 'play_arrow';
+                isPlaying = false;
             } else {
-                mainAudio.play().catch(e => {
-                    console.log('Audio play failed:', e);
-                });
-                playPauseBtn.textContent = 'pause';
+                // Nếu audio chưa được tải đầy đủ, tải lại
+                if (mainAudio.readyState < 3) {
+                    await loadAndPlayAudio(mainAudio.src);
+                } else {
+                    try {
+                        await mainAudio.play();
+                        playPauseBtn.textContent = 'pause';
+                        isPlaying = true;
+                    } catch (error) {
+                        console.log('Audio play failed:', error);
+                        // Thử tải lại nếu phát thất bại
+                        await loadAndPlayAudio(mainAudio.src);
+                    }
+                }
             }
-            isPlaying = !isPlaying;
         }
 
         // Update progress bar
@@ -717,7 +1087,7 @@
 
         // Seek functionality
         function seek(e) {
-            if (!mainAudio.src) return;
+            if (!mainAudio.src || isAudioLoading) return;
 
             const progressWidth = progressBar.clientWidth;
             const clickedOffsetX = e.offsetX;
@@ -808,41 +1178,38 @@
             };
 
             // Play selected song function
-            function playSelectedSong(song, songs, index) {
+            async function playSelectedSong(song, songs, index) {
                 document.querySelector('.song-details .name').textContent = song.name;
                 document.querySelector('.song-details .artist').textContent = song.artist;
 
                 if (song.img) {
-                    document.getElementById('main-image').src = song.img;
+                    updateImage(song.img);
                 }
 
-                mainAudio.src = song.src;
                 currentSongs = songs;
                 currentSongIndex = index;
 
-                mainAudio.load();
-                mainAudio.play().then(() => {
-                    isPlaying = true;
-                    playPauseBtn.textContent = 'pause';
-                }).catch(e => {
-                    console.log('Audio play failed:', e);
-                    isPlaying = true;
-                    playPauseBtn.textContent = 'pause';
-                });
+                // Sử dụng hàm tối ưu để tải và phát nhạc
+                await loadAndPlayAudio(song.src);
+
+                // Preload bài tiếp theo
+                preloadNextAudio();
             }
 
             // Next/previous functionality
-            document.getElementById('next').addEventListener('click', () => {
-                if (currentSongs.length > 0) {
+            document.getElementById('next').addEventListener('click', async() => {
+                if (currentSongs.length > 0 && !isAudioLoading) {
                     currentSongIndex = (currentSongIndex + 1) % currentSongs.length;
-                    playSelectedSong(currentSongs[currentSongIndex], currentSongs, currentSongIndex);
+                    const nextSong = currentSongs[currentSongIndex];
+                    await playSelectedSong(nextSong, currentSongs, currentSongIndex);
                 }
             });
 
-            document.getElementById('prev').addEventListener('click', () => {
-                if (currentSongs.length > 0) {
+            document.getElementById('prev').addEventListener('click', async() => {
+                if (currentSongs.length > 0 && !isAudioLoading) {
                     currentSongIndex = (currentSongIndex - 1 + currentSongs.length) % currentSongs.length;
-                    playSelectedSong(currentSongs[currentSongIndex], currentSongs, currentSongIndex);
+                    const prevSong = currentSongs[currentSongIndex];
+                    await playSelectedSong(prevSong, currentSongs, currentSongIndex);
                 }
             });
 
@@ -870,14 +1237,15 @@
             });
 
             // Auto play next song when current ends
-            mainAudio.addEventListener('ended', () => {
+            mainAudio.addEventListener('ended', async() => {
                 if (repeatMode === 2) {
                     mainAudio.currentTime = 0;
-                    mainAudio.play();
+                    await mainAudio.play();
                 } else if (currentSongs.length > 0) {
                     if (repeatMode === 1 || currentSongIndex < currentSongs.length - 1) {
                         currentSongIndex = (currentSongIndex + 1) % currentSongs.length;
-                        playSelectedSong(currentSongs[currentSongIndex], currentSongs, currentSongIndex);
+                        const nextSong = currentSongs[currentSongIndex];
+                        await playSelectedSong(nextSong, currentSongs, currentSongIndex);
                     } else {
                         isPlaying = false;
                         playPauseBtn.textContent = 'play_arrow';
@@ -904,6 +1272,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Khởi tạo hiệu ứng Meteor Showers
             initMeteorShowers();
+
+            // Preload tất cả ảnh khi trang tải
+            preloadAllImages();
 
             // Tải bài hát random
             loadRandomSong();
